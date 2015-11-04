@@ -16,7 +16,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.junit.After;
 import org.junit.Test;
-
+import java.util.List;
 import rest.addressbook.AddressBook;
 import rest.addressbook.ApplicationConfig;
 import rest.addressbook.Person;
@@ -34,19 +34,18 @@ public class AddressBookServiceTest {
 		// Prepare server
 		AddressBook ab = new AddressBook();
 		launchServer(ab);
-
+		List<Person> primeraLista=ab.getPersonList();
 		// Request the address book
 		Client client = ClientBuilder.newClient();
 		Response response = client.target("http://localhost:8282/contacts")
 				.request().get();
 		assertEquals(200, response.getStatus());
-		assertEquals(0, response.readEntity(AddressBook.class).getPersonList()
-				.size());
+		List<Person> postLista=response.readEntity(AddressBook.class).getPersonList();
 
-		//////////////////////////////////////////////////////////////////////
-		// Verify that GET /contacts is well implemented by the service, i.e
 		// test that it is safe and idempotent
-		//////////////////////////////////////////////////////////////////////	
+		assertEquals(0, postLista.size());
+		assertEquals(primeraLista, postLista);
+
 	}
 
 	@Test
@@ -54,6 +53,8 @@ public class AddressBookServiceTest {
 		// Prepare server
 		AddressBook ab = new AddressBook();
 		launchServer(ab);
+
+		List<Person> primeraLista=ab.getPersonList();
 
 		// Prepare data
 		Person juan = new Person();
@@ -84,11 +85,20 @@ public class AddressBookServiceTest {
 		assertEquals(1, juanUpdated.getId());
 		assertEquals(juanURI, juanUpdated.getHref());
 
-		//////////////////////////////////////////////////////////////////////
-		// Verify that POST /contacts is well implemented by the service, i.e
 		// test that it is not safe and not idempotent
-		//////////////////////////////////////////////////////////////////////	
-				
+		// As we know GET is idempotent
+		response = client.target("http://localhost:8282/contacts")
+				.request().get();
+		assertEquals(200, response.getStatus());
+		List<Person> postLista=response.readEntity(AddressBook.class).getPersonList();
+		assertNotEquals(primeraLista, postLista);
+		response = client.target("http://localhost:8282/contacts")
+				.request(MediaType.APPLICATION_JSON)
+				.post(Entity.entity(juan, MediaType.APPLICATION_JSON));
+
+		Person juanUpdated2 = response.readEntity(Person.class);
+		assertNotEquals(juanUpdated, juanUpdated2);
+
 	}
 
 	@Test
