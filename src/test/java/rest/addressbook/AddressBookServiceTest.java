@@ -85,7 +85,7 @@ public class AddressBookServiceTest {
 		assertEquals(1, juanUpdated.getId());
 		assertEquals(juanURI, juanUpdated.getHref());
 
-		// test that it is not safe and not idempotent.
+		// test that it is not safe and not idempotent
 		response = client.target("http://localhost:8282/contacts")
 				.request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(juan, MediaType.APPLICATION_JSON));
