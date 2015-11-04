@@ -28,6 +28,7 @@ public class PhoneNumber {
                 if (type != other.type) return false;
                 return true;
         }
+        
 
 	public String getNumber() {
 		return number;
