@@ -11,7 +11,8 @@ public class PhoneNumber {
 	private String number;
 	private PhoneType type = HOME;
 
- /* (non-Javadoc)
+
+ 		/* (non-Javadoc)
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
