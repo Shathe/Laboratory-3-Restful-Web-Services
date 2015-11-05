@@ -16,8 +16,8 @@ public class Person {
 	private URI href;
 	private List<PhoneNumber> phoneList = new ArrayList<PhoneNumber>();
 	
-	/* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
+		/* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object).
          */
         @Override
         public boolean equals(Object obj) {
